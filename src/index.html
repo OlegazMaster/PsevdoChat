@@ -1,0 +1,102 @@
+<html lang="ru">
+    <head>
+        <title>
+            Psevdo-Chat
+        </title>
+        <script>
+            window.socket = new WebSocket("ws://" + location.host + "/ws");
+
+function sendMessage(msg) {
+    var len = '' + msg.length
+    while (len.length < 1024) len += ' '
+    socket.send(len + msg);
+    socket.send("Hello World!")
+}
+
+function handleSubmit() {
+    var el = document.getElementById("chat-msg");
+    sendMessage(el.value);
+    el.value = '';
+
+    return false;
+}
+
+function setUpSocket(onmessage) {
+    socket.onopen = function() {
+        console.log("Connection sucsess.");
+        sendMessage("Pidoras Connected")
+    }
+ 
+    socket.onclose = function(event) {
+        if (event.wasClean) {
+            console.log("Connection close clear.");
+        } else {
+            console.log("fatal connect.");
+            console.log("Code: " + event.code + "reason: " + event.reason);
+        }
+    }
+
+    socket.onmessage = onmessage;
+
+    socket.onerror = function(error) {
+        console.log("Error: " + error.message);
+    }
+}
+
+function displayMessage(msg) {
+    var container = document.getElementById("container");
+
+    var div = document.createElement("div");
+    div.className = 'message'
+
+    var textNode = document.createTextNode(msg.data);
+
+    div.appendChild(textNode);
+    container.appendChild(div);
+}
+        </script>
+            
+        </script>
+        <style type="text/css">
+            .message {
+                padding-bottom: 20px;
+                color: aliceblue;
+                
+                
+            }
+            input { 
+                font-size: x-large;
+                font-weight: 800;
+                position:relative;
+                top: 680px;
+                
+                
+            }
+
+            div {
+                font-size: x-large;
+            }
+
+            body {
+                background-color: rgb(29, 29, 29);
+            }
+        
+        </style>
+    </head>
+    <body>
+        <script>
+            setUpSocket(displayMessage);
+        </script>
+        <form action="#" onsubmit="return handleSubmit()">
+            <input type="text" id="chat-msg" />
+            <input type="submit" value="Отправить" />
+        </form>
+        <div id="container">
+            
+        </div>
+        
+         <script>
+            let audio = (document.getElementById('audio').autoplay = true);
+         </script>
+    </body>
+</html>
